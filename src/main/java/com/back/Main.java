@@ -7,6 +7,7 @@ public class Main {
         System.out.println("== 명언 앱 ==");
 
         Scanner scanner = new Scanner(System.in);
+        int id = 0;
 
         while (true) {
             System.out.print("명령) ");
@@ -20,7 +21,7 @@ public class Main {
                 System.out.print("작가 : ");
                 String author = scanner.nextLine().trim();
 
-                System.out.println("1번 명언이 등록되었습니다.");
+                System.out.println("%d번 명언이 등록되었습니다.".formatted(++id));
             }
         }
 
