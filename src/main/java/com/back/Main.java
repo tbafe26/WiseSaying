@@ -13,6 +13,13 @@ public class Main {
             String command = scanner.nextLine().trim();
 
             if (command.equals("종료")) break;
+            else if (command.equals("등록")) {
+                System.out.print("명언 : ");
+                String quote = scanner.nextLine().trim();
+
+                System.out.print("작가 : ");
+                String author = scanner.nextLine().trim();
+            }
         }
 
         scanner.close();
