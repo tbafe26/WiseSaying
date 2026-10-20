@@ -19,6 +19,8 @@ public class Main {
 
                 System.out.print("작가 : ");
                 String author = scanner.nextLine().trim();
+
+                System.out.println("1번 명언이 등록되었습니다.");
             }
         }
 
