@@ -88,12 +88,17 @@ public class App {
             return;
         }
 
-        delete(id);
+        int deleteIndex = delete(id);
+
+        if (deleteIndex == -1) {
+            System.out.println("%d번 명언은 존재하지 않습니다.".formatted(id));
+            return;
+        }
 
         System.out.println("%d번 명언이 삭제되었습니다.".formatted(id));
     }
 
-    void delete(int id) {
+    int delete(int id) {
         int deleteIndex = -1;
 
         for (int i = 0; i <= lastIndex; i++) {
@@ -103,7 +108,7 @@ public class App {
             }
         }
 
-        if (deleteIndex == -1) return;
+        if (deleteIndex == -1) return deleteIndex;
 
         for (int i = deleteIndex + 1; i <= lastIndex; i++) {
             wiseSayings[i - 1] = wiseSayings[i];
@@ -111,5 +116,7 @@ public class App {
 
         wiseSayings[lastIndex] = null;
         lastIndex--;
+
+        return deleteIndex;
     }
 }
