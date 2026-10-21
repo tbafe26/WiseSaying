@@ -17,14 +17,15 @@ public class App {
             String command = scanner.nextLine().trim();
 
             if (command.equals("종료")) break;
-            else if (command.equals("등록")) register();
-            else if (command.equals("목록")) list();
+            else if (command.equals("등록")) registerAction();
+            else if (command.equals("목록")) listAction();
+            else if (command.startsWith("삭제?id=")) deleteAction(command);
         }
 
         scanner.close();
     }
 
-    void register() {
+    void registerAction() {
         if (lastIndex + 1 >= wiseSayings.length) {
             System.out.println("더 이상 명언을 등록할 수 없습니다.");
             return;
@@ -36,12 +37,12 @@ public class App {
         System.out.print("작가 : ");
         String author = scanner.nextLine().trim();
 
-        WiseSaying wiseSaying = create(quote, author);
+        WiseSaying wiseSaying = register(quote, author);
 
         System.out.println("%d번 명언이 등록되었습니다.".formatted(wiseSaying.id));
     }
 
-    WiseSaying create(String quote, String author) {
+    WiseSaying register(String quote, String author) {
         WiseSaying wiseSaying = new WiseSaying();
         wiseSaying.id = ++lastId;
         wiseSaying.quote = quote;
@@ -52,18 +53,18 @@ public class App {
         return wiseSaying;
     }
 
-    void list() {
+    void listAction() {
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
 
-        WiseSaying[] registeredWiseSayings = getWiseSayings();
+        WiseSaying[] registeredWiseSayings = list();
 
         for (WiseSaying wiseSaying : registeredWiseSayings) {
             System.out.printf("%d / %s / %s%n", wiseSaying.id, wiseSaying.author, wiseSaying.quote);
         }
     }
 
-    WiseSaying[] getWiseSayings() {
+    WiseSaying[] list() {
         WiseSaying[] result = new WiseSaying[lastIndex + 1];
 
         int index = 0;
@@ -73,5 +74,42 @@ public class App {
         }
 
         return result;
+    }
+
+    void deleteAction(String command) {
+        String[] parts = command.split("=", 2);
+
+        int id;
+
+        try {
+            id = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            System.out.println("올바른 id를 입력해주세요.");
+            return;
+        }
+
+        delete(id);
+
+        System.out.println("%d번 명언이 삭제되었습니다.".formatted(id));
+    }
+
+    void delete(int id) {
+        int deleteIndex = -1;
+
+        for (int i = 0; i <= lastIndex; i++) {
+            if (wiseSayings[i].id == id) {
+                deleteIndex = i;
+                break;
+            }
+        }
+
+        if (deleteIndex == -1) return;
+
+        for (int i = deleteIndex + 1; i <= lastIndex; i++) {
+            wiseSayings[i - 1] = wiseSayings[i];
+        }
+
+        wiseSayings[lastIndex] = null;
+        lastIndex--;
     }
 }
