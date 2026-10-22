@@ -17,11 +17,17 @@ public class App {
             System.out.print("명령) ");
             String command = scanner.nextLine().trim();
 
-            if (command.equals("종료")) break;
-            else if (command.equals("등록")) registerAction();
-            else if (command.equals("목록")) listAction();
-            else if (command.startsWith("삭제?id=")) deleteAction(command);
-            else if (command.startsWith("수정?id=")) modifyAction(command);
+            Rq rq = new Rq(command);
+            String actionName = rq.getActionName();
+
+            if (actionName.equals("종료")) break;
+
+            switch (actionName) {
+                case "등록" -> registerAction();
+                case "목록" -> listAction();
+                case "삭제" -> deleteAction(rq);
+                case "수정" -> modifyAction(rq);
+            }
         }
 
         scanner.close();
@@ -53,10 +59,7 @@ public class App {
         List<WiseSaying> registeredWiseSayings = list();
 
         for (WiseSaying wiseSaying : registeredWiseSayings) {
-            System.out.printf("%d / %s / %s%n",
-                    wiseSaying.getId(),
-                    wiseSaying.getAuthor(),
-                    wiseSaying.getQuote());
+            System.out.printf("%d / %s / %s%n", wiseSaying.getId(), wiseSaying.getAuthor(), wiseSaying.getQuote());
         }
     }
 
@@ -64,22 +67,8 @@ public class App {
         return wiseSayings.reversed();
     }
 
-    private Integer parseId(String command) {
-        String[] parts = command.split("=", 2);
-
-        try {
-            return Integer.parseInt(parts[1]);
-        } catch (NumberFormatException e) {
-            System.out.println("올바른 id를 입력해주세요.");
-            return null;
-        }
-    }
-
     private int findIndexById(int id) {
-        return IntStream.range(0, wiseSayings.size())
-                .filter(index -> wiseSayings.get(index).getId() == id)
-                .findFirst()
-                .orElse(-1);
+        return IntStream.range(0, wiseSayings.size()).filter(index -> wiseSayings.get(index).getId() == id).findFirst().orElse(-1);
     }
 
     private WiseSaying findById(int id) {
@@ -90,10 +79,13 @@ public class App {
         return wiseSayings.get(index);
     }
 
-    private void deleteAction(String command) {
-        Integer id = parseId(command);
+    private void deleteAction(Rq rq) {
+        int id = rq.getParamAsInt("id", -1);
 
-        if (id == null) return;
+        if (id == -1) {
+            System.out.println("올바른 id를 입력해주세요.");
+            return;
+        }
 
         boolean deleted = delete(id);
 
@@ -115,10 +107,13 @@ public class App {
         return true;
     }
 
-    private void modifyAction(String command) {
-        Integer id = parseId(command);
+    private void modifyAction(Rq rq) {
+        int id = rq.getParamAsInt("id", -1);
 
-        if (id == null) return;
+        if (id == -1) {
+            System.out.println("올바른 id를 입력해주세요.");
+            return;
+        }
 
         WiseSaying wiseSaying = findById(id);
 
